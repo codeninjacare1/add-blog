@@ -1,0 +1,60 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            {% if post.image %}
+            <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}">
+            {% endif %}
+            <div class="card-body">
+                <h1 class="card-title">{{ post.title }}</h1>
+                <p class="text-muted">
+                    By {{ post.author.username }} on {{ post.created_at|date:"F d, Y" }}
+                </p>
+                <p class="card-text">{{ post.content|linebreaks }}</p>
+                
+                {% if can_edit %}
+                <div class="btn-group">
+                    <a href="{% url 'blog:post_update' post.pk %}" class="btn btn-primary">Edit</a>
+                    <a href="{% url 'blog:post_delete' post.pk %}" class="btn btn-danger">Delete</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <h3>Related Posts</h3>
+            <div class="row">
+                {% for related_post in related_posts %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        {% if related_post.image %}
+                        <img src="{{ related_post.image.url }}" class="card-img-top" alt="{{ related_post.title }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ related_post.title }}</h5>
+                            <p class="card-text">{{ related_post.description|truncatewords:20 }}</p>
+                            <p class="text-muted">
+                                <small>
+                                    By {{ related_post.author.username }}
+                                </small>
+                            </p>
+                            <a href="{% url 'blog:post_detail' related_post.pk %}" class="btn btn-primary">Read More</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        No related posts available.
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
