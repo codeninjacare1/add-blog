@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.views.decorators.http import require_POST
 
 
 
@@ -16,20 +17,25 @@ def login_page(request):
         if user is not None:
             login(request, user)
             messages.success(request, 'Login successful!')
-            return redirect('/chat/rahul/')
+            return redirect('post_list.html')
         else:
             messages.error(request, 'Invalid email or password. Please try again.')
     if request.user.is_authenticated:
         return redirect('/chat/rahul/')
-    return render(request,'login.html')
+    return render(request,'post_list.html')
 
 
+# @login_required
+# def logout_page(request):
+#     logout(request)  
+#     messages.success(request, 'You have been logged out successfully.') 
+#     return redirect('/')
 @login_required
+@require_POST
 def logout_page(request):
-    logout(request)  
-    messages.success(request, 'You have been logged out successfully.') 
+    logout(request)
+    messages.success(request, 'You have been logged out successfully.')
     return redirect('/')
-
 
 def signup_view(request):
     if request.method == 'POST':
